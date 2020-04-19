@@ -33,7 +33,6 @@ class MainWindow extends Component {
         return(
             <div className="App">
                 <header className="App-header">
-                    {this.state.gotData?<SingleTab item={this.state.item}/>:<SpinningLoader/>}
                     <button onClick={this.getInformation}>Click Here</button>
                 </header>
                 
