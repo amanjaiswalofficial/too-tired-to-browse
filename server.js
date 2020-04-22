@@ -60,14 +60,24 @@ app.get('/test', async function(req, res){
     const folderInfo = new FolderInformation()
     let filePaths = folderInfo.getPaths(folderPath)
     
+
     filePaths.forEach((object) => {
         getSearchStrings(object, usageWordCount)
     })
 
+    filePaths = filePaths.filter((object) => {
+        if(!object['folderEmpty']){
+            return object
+        }
+    })
+
+    console.log(filePaths)
+    
     for(let i=0;i<filePaths.length;i++){
         filePaths[i]['searchResults'] = await getDataFromFileNames(filePaths[i])
     }
 
+    console.log(filePaths)
     res.send(filePaths)    
     
     //Play video
@@ -119,14 +129,4 @@ Procfile config
 react: npm start
 electron: npm run electron
 node: nodemon server
-*/
-
-
-
-/*
-get all file names from a folder -> store it in array DONE
-take one file name, find all possible words, and then make single strings based on combination of those words based on no of words like A,A+B
-get the first 3 or 5 such searchstrings from every file name -> DONE
-for each make 2 hits one for movie and one for tv show, if both exist, store data from both or else save from the one that exist, dont make any more hits if match found
-store all the information for all the files in a location and then return it to the frontend
 */

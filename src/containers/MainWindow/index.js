@@ -22,18 +22,30 @@ class MainWindow extends Component {
         const response = await axios.get('http://localhost:3002/test')
         console.log('response is: ',response)
         this.setState({
-            item: response.data
+            items: response.data
         })
         this.setState({
             gotData: true
         })
     } 
 
+    displayTabs = () => {
+        
+        let itemDisplayPane = this.state.items.map((singleItem) => {
+            return (<li style={{float: "left", display: "inline", listStyleType: "none"}}>
+                <SingleTab item={singleItem}/>
+                </li>)
+        })
+
+        return <ul>{itemDisplayPane}</ul>
+    }
+
     render(){
+
         return(
             <div className="App">
                 <header className="App-header">
-                    <button onClick={this.getInformation}>Click Here</button>
+                    {this.state.gotData?this.displayTabs():<SpinningLoader/>}
                 </header>
                 
             </div>

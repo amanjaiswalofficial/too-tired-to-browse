@@ -17,7 +17,7 @@ getDataFromFileName = async (title, checkForMovie, checkForSeries) => {
     let APIResponseForSeries
     if(checkForMovie){
         const movieQueryStringForAPI = SEARCH_STRING_FOR_MOVIE + title
-        APIResponseForMovies = await axios.get(movieQueryStringForAPI).then((response) =>{ return response})
+        APIResponseForMovies = await axios.get(movieQueryStringForAPI, {timeout: 10000}).then((response) =>{ return response})
     }
     if(checkForSeries){
         const seriesQueryStringForAPI = SEARCH_STRING_FOR_SERIES + title
@@ -38,34 +38,8 @@ getDataFromFileNames = async (singleObject) => {
     let finalMovieResponse = null
     let finalSeriesResponse = null
     let arrayOfWords = singleObject['searchStrings']
-    // if(arrayOfWords.length && singleObject['isFile']){
-
-        // //first search for A+B+C, then A+B, then A
-        // for(var index=arrayOfWords.length-1;index>=0;index--){
-        //     let movie = null
-        //     let series = null
-        //     responses = await getDataFromFileName(arrayOfWords[index], checkForMovie, checkForSeries)
-        //     if(responses){
-        //         // get the movie and series response from the hit
-        //         movie = responses[0]
-        //         series = responses[1]
-                
-        //         //If a movie is found, then stop looking for more movies
-        //         if(typeof movie != 'undefined' && 'Title' in movie.data && checkForMovie){
-        //             checkForMovie = false
-        //             movieResponse = movie.data        
-        //         }
-        //         //If a series is found then stop looking for more series
-        //         if(typeof series != 'undefined' && 'Title' in series.data && checkForSeries){
-        //             checkForSeries = false
-        //             seriesResponse = series.data
-        //         }
-        //     }
-            
-        // }
-    // }
-    if(arrayOfWords.length && singleObject['isFile']){
-        
+    console.log(singleObject)
+    if(arrayOfWords.length && singleObject['isFile'] || !singleObject['isFile'] && singleObject['filePath']){
         for(var index=arrayOfWords.length-1;index>=0;index--){
             let movie = null
             let series = null
@@ -102,7 +76,14 @@ getDataFromFileNames = async (singleObject) => {
         'Poster': seriesResponse['Poster']
     }
     delete singleObject['searchStrings']
-    return [finalMovieResponse, finalSeriesResponse]
+
+    // currently returning the more famous response
+    if(movieResponse['imdbVotes'] > seriesResponse['imdbVotes']){
+        return movieResponse
+    }else{
+        return seriesResponse
+    }
+    //return [finalMovieResponse, finalSeriesResponse]
 }
 
 

@@ -4,8 +4,12 @@ import { Card, Button, Carousel } from 'react-bootstrap'
 import axios from 'axios'
 
 /*{
-    movie:{},
-    series:{}
+    index,
+    isFile,
+    dir_path,
+    fileName,
+    folderEmpty, only if folder,
+    searchResults
 }*/
 
 class SingleTab extends Component {
@@ -21,51 +25,55 @@ class SingleTab extends Component {
     })
     }
 
-    displayTabs = () => {
-        return this.props.item.map((singleItem) => {
+    doThisAsWell = (e) => {
+        console.
+        e.preventDefault()
+    }
 
-            if(singleItem){
-                return <div style={{display:"inline-block"}} onClick={event => this.doThis(singleItem.series['Path'])}>
-                <Card style={{height: "400px", width: "300px"}}>
-                <Carousel interval="false">
-                    <Carousel.Item>
-                        <img
-                        style={{
-                    width:"100%",
-                    height:"398px",
-                    objectFit: "cover"}}
-                        src={singleItem.movie['Poster']}
-                        />
-                    </Carousel.Item>
-                    <Carousel.Item>
-                        <img
-                        style={{
-                    width:"100%",
-                    height:"398px",
-                    objectFit: "cover"}}
-                        src={singleItem.series['Poster']}
-                        />
-                    </Carousel.Item>
-                </Carousel>
-                <Button style={{
-                    position: "absolute",
-                    top:"90.5%",
-                    left:"66%",
-                    width: "10%;"
-                }}>Click Here</Button>
-            </Card></div>
-            }
+    displayTab = () => {
+        
+        return (
+            <div style={{verticalAlign: 'middle'}}>
+            <Card style={{height: '380px', width: '250px'}}>
             
-        })
+            <Button style={{
+                    position: "absolute",
+                    top:"45%",
+                    left:"41%",
+                    opacity:2
+                }} onClick={event => this.doThis(this.props.item['filePath'])}>Play</Button>
+            <Card.Img 
+            variant="top" 
+            src={this.props.item.searchResults['Poster']}
+            style={{height: "100%", width: "100%", objectFit: "cover"}} 
+            />
+            </Card>
+        </div>
+        )  
     }
 
     render(){
         return(
             <div style={{display:"inline-block"}}>
-                {this.displayTabs()}
+                {this.displayTab()}
             </div>
         )
     }
 }
 
 export default SingleTab
+
+
+{/* <div style={{display:"inline-block"}}   >
+                <Card style={{height: "300px", width: "200px", verticalAlign: 'middle'}}>
+                <Card.Img variant="top" src={this.props.item.searchResults['Poster']} style={{objectFit: 'cover'}}/>
+                <Card.Body>
+                <Button style={{
+                    position: "absolute",
+                    top:"45%",
+                    left:"41%",
+                    opacity:2
+                }} onClick={event => this.doThis(this.props.item['filePath'])}>Play</Button>
+                </Card.Body>
+                </Card>
+            </div> */}
