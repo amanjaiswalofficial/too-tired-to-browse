@@ -1,29 +1,26 @@
 {
-  "name": "to-tired-to-browse",
-  "version": "0.1.0",
+  "name": "too-tired-to-browse",
+  "main": "electron/main.js",
+  "homepage": "./",
+  "version": "1.0.0",
   "private": true,
-  "main": "main.js",
   "dependencies": {
-    "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
-    "cors": "^2.8.5",
-    "electron": "^8.2.0",
-    "foreman": "^3.0.1",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.12.0",
-    "react-loader-spinner": "^3.1.5",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.2.0",
-    "video-thumbnail-generator": "^1.1.3"
+    "react-scripts": "3.2.0"
   },
   "scripts": {
-    "dev": "nf start -p 3001",
-    "start": "react-scripts start",
+    "start": "export BROWSER=none && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron ."
+    "start-electron-react": "export ELECTRON_START_URL=http://localhost:3001 && electron .",
+    "start-electron": "electron .",
+    "build-electron": "mkdir build/src && cp -r electron/. build/electron && cp -r src/shared/. build/src/shared",
+    "package": "electron-builder build -c.extraMetadata.main=build/electron/main.js --publish never"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -39,5 +36,20 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^8.2.3",
+    "electron-builder": "^22.5.1"
+  },
+  "build": {
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "publish": {
+      "provider": "github",
+      "repo": "electron-cra-example",
+      "owner": "johndyer24"
+    }
   }
 }
