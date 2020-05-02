@@ -3,6 +3,7 @@ import logo from '../logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { channels } from '../shared/constants';
+import MainWindow from './containers/MainWindow'
 const { ipcRenderer } = window 
 
 class App extends React.Component {
@@ -12,21 +13,19 @@ class App extends React.Component {
       appName: '',
       appVersion: '',
     };
-    ipcRenderer.send(channels.APP_INFO);
     ipcRenderer.on(channels.APP_INFO, (event, arg) => {
       ipcRenderer.removeAllListeners(channels.APP_INFO);
-      const { appName, appVersion } = arg;
-      this.setState({ appName, appVersion });
+      const { appName, appVersion, folderPath } = arg;
+      this.setState({ appName, appVersion, folderPath });
     });
   }
 
   render() {
-    const { appName, appVersion } = this.state;
+    const { appName, appVersion, folderPath } = this.state;
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>{appName} version {appVersion}</p>
+        <MainWindow/>
         </header>
       </div>
     );

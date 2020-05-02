@@ -1,16 +1,28 @@
-const { app, BrowserWindow, ipcMain, dialog} = require('electron');
+const { app, BrowserWindow, ipcMain, ipcRenderer, dialog} = require('electron');
 const path = require('path');
 const url = require('url');
 const { channels } = require('../src/shared/constants');
+const {getVideoData} = require('./server')
 
-let mainWindow;
-function createWindow () {
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
-    pathname: path.join(__dirname, '../public/index.html'),
-    protocol: 'file:',
-    slashes: true,
-  });
-  mainWindow = new BrowserWindow({ 
+let folderPath = null
+
+let electronWindow;
+// const startUrl =   url.format({
+//                     pathname: path.join(__dirname, '../public/index.html'),
+//                     protocol: 'file:',
+//                     slashes: true,
+//                   });
+const startUrl =   url.format({
+  pathname: path.join(__dirname, '../public/electron.html'),
+  protocol: 'file:',
+  slashes: true,
+});
+
+
+
+
+function createElectronWindow () {
+  electronWindow = new BrowserWindow({ 
     width: 800, 
     height: 600, 
     webPreferences: {
@@ -19,44 +31,83 @@ function createWindow () {
     }, 
   });
   
-  mainWindow.loadURL(startUrl);
-  mainWindow.webContents.openDevTools()
-  mainWindow.on('closed', function () {
-    mainWindow = null;
+  electronWindow.loadURL(startUrl);
+  electronWindow.webContents.openDevTools()
+  electronWindow.on('closed', function () {
+    electronWindow = null;
   });
-}app.on('ready', createWindow);
+}
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});app.on('activate', function () {
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
+
+app.on('ready', createElectronWindow);
+
+
+
+// app.on('window-all-closed', function () {
+//   if (process.platform !== 'darwin') {
+//     app.quit();
+//   }
+// });
+
+
+// app.on('activate', function () {
+//   if (mainWindow === null) {
+//     createElectronWindow();
+//   }
+// });
+
+
+
+
 
 ipcMain.on('open-folder-dialog', async () => {
-  folder_path = await dialog.showOpenDialog(mainWindow, {
+  
+  folderPath = await dialog.showOpenDialog(electronWindow, {
       properties: ['openDirectory']
   });
-  
-  //process.env.ELECTRON_START_URL = 'http://localhost:3001'
-  
+
+  // getVideoData(folder_path.filePaths[0])
+  //electronWindow.webContents.executeJavaScript(`localStorage.setItem("folderPath", ${folder_path.filePaths[0]})`, true)
+
+  //while development
+  // process.env.ELECTRON_START_URL = 'http://localhost:3001'
+  // electronWindow.loadURL(process.env.ELECTRON_START_URL)
+
+  //while production
+  const newUrl =   url.format({
+    pathname: path.join(__dirname, '../index.html'),
+    protocol: 'file:',
+    slashes: true,
+  });
+  electronWindow.loadURL(newUrl)
 })
 
 ipcMain.on(channels.APP_INFO, (event) => {
   event.sender.send(channels.APP_INFO, {
     appName: app.getName(),
     appVersion: app.getVersion(),
+    folderPath: folderPath.filePaths[0]
   });
 });
 
+//get data from folderPath
+ipcMain.on(channels.GET_INFO, async (event) => {
 
+  let videoFiles = await getVideoData(folderPath.filePaths[0])
+  event.sender.send(channels.GET_INFO, {
+    info: videoFiles
+  })
+})
+
+// ipcRenderer.send(channels.GET_DATA, (event) => {
+//   event.sender.send(channels.GET_DATA, {
+//     data: 'abc'
+//   })
+// })
 
 /*
  Snippets while packaging
- <script src="../electron/folder-dialog.js"></script>
+ <script src="./electron/folder-dialog.js"></script>
 
  pathname: path.join(__dirname, '../index.html')
  */
