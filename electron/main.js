@@ -32,7 +32,7 @@ function createElectronWindow () {
   });
   
   electronWindow.loadURL(startUrl);
-  electronWindow.webContents.openDevTools()
+  //electronWindow.webContents.openDevTools()
   electronWindow.on('closed', function () {
     electronWindow = null;
   });
@@ -57,29 +57,32 @@ app.on('ready', createElectronWindow);
 // });
 
 
-
-
-
 ipcMain.on('open-folder-dialog', async () => {
   
   folderPath = await dialog.showOpenDialog(electronWindow, {
       properties: ['openDirectory']
   });
+  // Static folder for now:
+  // folderPath = {
+  //   filePaths: ['/home/aman/Videos/']
+  // }
+
+
 
   // getVideoData(folder_path.filePaths[0])
   //electronWindow.webContents.executeJavaScript(`localStorage.setItem("folderPath", ${folder_path.filePaths[0]})`, true)
 
   //while development
-  // process.env.ELECTRON_START_URL = 'http://localhost:3001'
-  // electronWindow.loadURL(process.env.ELECTRON_START_URL)
+  process.env.ELECTRON_START_URL = 'http://localhost:3001'
+  electronWindow.loadURL(process.env.ELECTRON_START_URL)
 
   //while production
-  const newUrl =   url.format({
-    pathname: path.join(__dirname, '../index.html'),
-    protocol: 'file:',
-    slashes: true,
-  });
-  electronWindow.loadURL(newUrl)
+  // const newUrl =   url.format({
+  //   pathname: path.join(__dirname, '../index.html'),
+  //   protocol: 'file:',
+  //   slashes: true,
+  // });
+  // electronWindow.loadURL(newUrl)
 })
 
 ipcMain.on(channels.APP_INFO, (event) => {
@@ -111,3 +114,6 @@ ipcMain.on(channels.GET_INFO, async (event) => {
 
  pathname: path.join(__dirname, '../index.html')
  */
+
+ //Enable play button to play video
+ //If clicked on a folder open the same window again for folder

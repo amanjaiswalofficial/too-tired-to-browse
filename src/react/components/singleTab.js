@@ -20,9 +20,8 @@ class SingleTab extends Component {
     }
 
     doThis = (filePath) => {
-    //     axios.post('http://localhost:3002/play', {
-    //     filePath: filePath
-    // })
+    
+        console.log(filePath)
     }
 
     doThisAsWell = (e) => {
@@ -41,7 +40,7 @@ class SingleTab extends Component {
                     top:"45%",
                     left:"41%",
                     opacity:2
-                }} onClick={event => this.doThis(this.props.item['filePath'])}>Play</Button>
+                }} onClick={event => this.doThis(this.props.item)}>Play</Button>
             <Card.Img 
             variant="top" 
             src={this.props.item.searchResults['Poster']}

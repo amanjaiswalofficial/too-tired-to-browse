@@ -14,22 +14,22 @@ getVideoData = async (folderPath) => {
 
     const folderInfo = new FolderInformation()
     let filePaths = folderInfo.getPaths(folderPath)
-    
-    filePaths.forEach((object) => {
-        getSearchStrings(object, usageWordCount)
-    })
 
     filePaths = filePaths.filter((object) => {
         if(!object['folderEmpty']){
             return object
         }
     })
+    
+    filePaths.forEach((object) => {
+        getSearchStrings(object, usageWordCount)
+    })
+
+    
 
     for(let i=0;i<filePaths.length;i++){
         filePaths[i]['searchResults'] = await getDataFromFileNames(filePaths[i])
     }
-
-    //console.log(filePaths)
     return filePaths
 
 }

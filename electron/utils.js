@@ -1,6 +1,6 @@
 const axios = require('axios')
 const fs = require('fs')
-const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES} = require('./constants')
+const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES, VALID_FILE_FORMATS} = require('./constants')
 
 /*
 
@@ -96,10 +96,8 @@ getDataFromFileNames = async (singleObject) => {
 getSearchStrings = (currentObject, n=5) => {
 
     let resultArray = []
-    if(currentObject['isFile']){
-        let arrayOfWords = getWordsFromFileName(currentObject['fileName'])
-        resultArray = createSearchStrings(arrayOfWords, n)
-    }
+    let arrayOfWords = getWordsFromFileName(currentObject['fileName'])
+    resultArray = createSearchStrings(arrayOfWords, n)
     currentObject['searchStrings'] = resultArray
 
 }
@@ -138,8 +136,7 @@ class FolderInformation {
         for(let i=0; i<pathArray.length;i++){
             if(!pathArray[i]['isFile']){
                 firstFile = fs.readdirSync(pathArray[i]['dirPath'])[0]
-                console.log(firstFile)
-                if(firstFile){
+                if(firstFile && VALID_FILE_FORMATS.includes(firstFile.slice(-3))){
                     pathArray[i]['filePath'] = pathArray[i]['dirPath']+'/"'+firstFile+'"'
                     pathArray[i]['fileName'] = firstFile
                 }
@@ -171,21 +168,22 @@ class FolderInformation {
     
             //check if the path is for a file or folder
             isDirectory = fs.lstatSync(folderPath+'/'+file).isDirectory()
-            let info = {}
-            info['index'] = pathCounter
-            info['isFile'] = !isDirectory
+            if(isDirectory || VALID_FILE_FORMATS.includes(file.slice(-3))){
+                let info = {}
+                info['index'] = pathCounter
+                info['isFile'] = !isDirectory
 
-            if(isDirectory){
-                info['dirPath'] = folderPath+'/'+file
-            }
-            else{
-                info['filePath'] = folderPath+'/"'+file+'"'
-            }
-            info['fileName'] = file
-            pathCounter+=1
-            pathArray.push(info)
+                if(isDirectory){
+                    info['dirPath'] = folderPath+'/'+file
+                }
+                else{
+                    info['filePath'] = folderPath+'/"'+file+'"'
+                }
+                info['fileName'] = file
+                pathCounter+=1
+                pathArray.push(info)
+            }   
           });
-        
         this.getFilePathFromFolders(pathArray)
         return pathArray
     }
