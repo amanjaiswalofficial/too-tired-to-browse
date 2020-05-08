@@ -9,6 +9,7 @@ http://www.omdbapi.com/?apikey=948a2d08&&type=[movie/series/episode]&&t=Demon+Sl
  */
 
 
+
 /*
  * Makes API hit to get data for the file_name 
  */
@@ -42,7 +43,6 @@ getDataFromFileNames = async (singleObject) => {
     let finalMovieResponse = null
     let finalSeriesResponse = null
     let arrayOfWords = singleObject['searchStrings']
-    console.log(singleObject)
     if(arrayOfWords.length && singleObject['isFile'] || !singleObject['isFile'] && singleObject['filePath']){
         for(var index=arrayOfWords.length-1;index>=0;index--){
             let movie = null

@@ -1,6 +1,8 @@
 import React from 'react'
 import { Component } from 'react';
 import { Card, Button, Carousel } from 'react-bootstrap'
+import { channels } from '../../shared/constants'
+const { ipcRenderer } = window 
 //import axios from 'axios'
 
 /*{
@@ -20,8 +22,13 @@ class SingleTab extends Component {
     }
 
     doThis = (filePath) => {
-    
-        console.log(filePath)
+        if(filePath.dirPath){
+            console.log(channels.EXPLORE_FOLDER)
+            ipcRenderer.send(channels.EXPLORE_FOLDER, filePath.dirPath)
+        }
+        else{
+            ipcRenderer.send(channels.PLAY_VIDEO, filePath.filePath)
+        }
     }
 
     doThisAsWell = (e) => {

@@ -1,5 +1,6 @@
 // Contain all the backend side operations
 var utils = require('./utils')
+const {exec} = require('child_process')
 var getDataFromFileNames = utils.getDataFromFileNames
 var getSearchStrings = utils.getSearchStrings
 const FolderInformation = utils.FolderInformation
@@ -34,4 +35,13 @@ getVideoData = async (folderPath) => {
 
 }
 
-exports.getVideoData = getVideoData 
+
+
+playVideo = (videoPath) => {
+
+    exec('vlc -d '+videoPath)
+
+}
+
+exports.getVideoData = getVideoData
+exports.playVideo = playVideo 

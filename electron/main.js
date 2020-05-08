@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, ipcRenderer, dialog} = require('electron');
 const path = require('path');
 const url = require('url');
 const { channels } = require('../src/shared/constants');
-const {getVideoData} = require('./server')
+const {getVideoData, playVideo} = require('./server')
 
 let folderPath = null
 
@@ -65,7 +65,7 @@ ipcMain.on('open-folder-dialog', async () => {
   // Static folder for now:
   // folderPath = {
   //   filePaths: ['/home/aman/Videos/']
-  // }
+  }
 
 
 
@@ -100,6 +100,15 @@ ipcMain.on(channels.GET_INFO, async (event) => {
   event.sender.send(channels.GET_INFO, {
     info: videoFiles
   })
+})
+
+ipcMain.on(channels.EXPLORE_FOLDER, (event, arg) => {
+  console.log('inside')
+  console.log(arg)
+})
+
+ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
+  playVideo(arg)
 })
 
 // ipcRenderer.send(channels.GET_DATA, (event) => {
