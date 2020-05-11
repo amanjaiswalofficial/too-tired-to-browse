@@ -65,7 +65,7 @@ ipcMain.on('open-folder-dialog', async () => {
   // Static folder for now:
   // folderPath = {
   //   filePaths: ['/home/aman/Videos/']
-  }
+  // }
 
 
 
@@ -100,11 +100,14 @@ ipcMain.on(channels.GET_INFO, async (event) => {
   event.sender.send(channels.GET_INFO, {
     info: videoFiles
   })
+
 })
 
-ipcMain.on(channels.EXPLORE_FOLDER, (event, arg) => {
-  console.log('inside')
-  console.log(arg)
+ipcMain.on(channels.EXPLORE_FOLDER, async (event, folderPath) => {
+  let videoFiles = await getVideoData(folderPath)
+  event.sender.send(channels.GET_INFO, {
+    info: videoFiles
+  })
 })
 
 ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
@@ -124,5 +127,9 @@ ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
  pathname: path.join(__dirname, '../index.html')
  */
 
- //Enable play button to play video
+ 
+ //Display open in case of folder and play in case of video
  //If clicked on a folder open the same window again for folder
+ //Start integration of DB - Sqlite
+ //Save each hit's data in sqlite using name or something
+ //Write logic to fetch it from DB if found instead of API

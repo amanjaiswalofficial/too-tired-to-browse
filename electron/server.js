@@ -31,6 +31,7 @@ getVideoData = async (folderPath) => {
     for(let i=0;i<filePaths.length;i++){
         filePaths[i]['searchResults'] = await getDataFromFileNames(filePaths[i])
     }
+    console.log(filePaths)
     return filePaths
 
 }

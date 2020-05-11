@@ -133,10 +133,14 @@ class FolderInformation {
     getFilePathFromFolders(pathArray){
 
         let firstFile = null
+        let allFiles = null
         for(let i=0; i<pathArray.length;i++){
             if(!pathArray[i]['isFile']){
-                firstFile = fs.readdirSync(pathArray[i]['dirPath'])[0]
-                if(firstFile && VALID_FILE_FORMATS.includes(firstFile.slice(-3))){
+                allFiles = fs.readdirSync(pathArray[i]['dirPath'])
+                firstFile = allFiles.filter((singleObject) => {
+                    return VALID_FILE_FORMATS.includes(singleObject.slice(-3))
+                })[0]
+                if(firstFile){
                     pathArray[i]['filePath'] = pathArray[i]['dirPath']+'/"'+firstFile+'"'
                     pathArray[i]['fileName'] = firstFile
                 }

@@ -16,14 +16,12 @@ const { ipcRenderer } = window
 
 class SingleTab extends Component {
     
-
     componentWillMount(){
-        console.log(this.props.item)
+        const { item } = this.props
     }
 
-    doThis = (filePath) => {
+    performAction = (filePath) => {
         if(filePath.dirPath){
-            console.log(channels.EXPLORE_FOLDER)
             ipcRenderer.send(channels.EXPLORE_FOLDER, filePath.dirPath)
         }
         else{
@@ -47,12 +45,15 @@ class SingleTab extends Component {
                     top:"45%",
                     left:"41%",
                     opacity:2
-                }} onClick={event => this.doThis(this.props.item)}>Play</Button>
+                }} onClick={event => this.performAction(this.props.item)}>
+                {this.props.item.isFile? "Play": "Open"}
+            </Button>
             <Card.Img 
-            variant="top" 
-            src={this.props.item.searchResults['Poster']}
-            style={{height: "100%", width: "100%", objectFit: "cover"}} 
+                variant="top" 
+                src={this.props.item.searchResults['Poster']}
+                style={{height: "100%", width: "100%", objectFit: "cover"}} 
             />
+
             </Card>
         </div>
         )  
@@ -68,18 +69,3 @@ class SingleTab extends Component {
 }
 
 export default SingleTab
-
-
-{/* <div style={{display:"inline-block"}}   >
-                <Card style={{height: "300px", width: "200px", verticalAlign: 'middle'}}>
-                <Card.Img variant="top" src={this.props.item.searchResults['Poster']} style={{objectFit: 'cover'}}/>
-                <Card.Body>
-                <Button style={{
-                    position: "absolute",
-                    top:"45%",
-                    left:"41%",
-                    opacity:2
-                }} onClick={event => this.doThis(this.props.item['filePath'])}>Play</Button>
-                </Card.Body>
-                </Card>
-            </div> */}
