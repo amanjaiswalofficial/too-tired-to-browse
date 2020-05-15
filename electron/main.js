@@ -59,13 +59,13 @@ app.on('ready', createElectronWindow);
 
 ipcMain.on('open-folder-dialog', async () => {
   
-  folderPath = await dialog.showOpenDialog(electronWindow, {
-      properties: ['openDirectory']
-  });
+  // folderPath = await dialog.showOpenDialog(electronWindow, {
+  //     properties: ['openDirectory']
+  // });
   // Static folder for now:
-  // folderPath = {
-  //   filePaths: ['/home/aman/Videos/']
-  // }
+  folderPath = {
+    filePaths: ['/home/aman/Videos/']
+  }
 
 
 
@@ -73,7 +73,7 @@ ipcMain.on('open-folder-dialog', async () => {
   //electronWindow.webContents.executeJavaScript(`localStorage.setItem("folderPath", ${folder_path.filePaths[0]})`, true)
 
   //while development
-  process.env.ELECTRON_START_URL = 'http://localhost:3001'
+  process.env.ELECTRON_START_URL = 'http://localhost:3000'
   electronWindow.loadURL(process.env.ELECTRON_START_URL)
 
   //while production
@@ -128,8 +128,6 @@ ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
  */
 
  
- //Display open in case of folder and play in case of video
- //If clicked on a folder open the same window again for folder
  //Start integration of DB - Sqlite
  //Save each hit's data in sqlite using name or something
  //Write logic to fetch it from DB if found instead of API

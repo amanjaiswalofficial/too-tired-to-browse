@@ -1,13 +1,15 @@
 // Contain all the backend side operations
-var utils = require('./utils')
+// Library imports
 const {exec} = require('child_process')
+
+// Custom imports
+const utils = require('./utils')
+
+// Definitions
 var getDataFromFileNames = utils.getDataFromFileNames
 var getSearchStrings = utils.getSearchStrings
 const FolderInformation = utils.FolderInformation
 
-// app.post('/play', function(req, res){
-//     exec('vlc '+req.body.filePath)
-// })
 
 getVideoData = async (folderPath) => {    
     

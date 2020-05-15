@@ -82,7 +82,8 @@ getDataFromFileNames = async (singleObject) => {
     delete singleObject['searchStrings']
 
     // currently returning the more famous response
-    if(movieResponse['imdbVotes'] > seriesResponse['imdbVotes']){
+    if(parseInt(movieResponse['imdbVotes']) > parseInt(seriesResponse['imdbVotes']))
+    {
         return movieResponse
     }else{
         return seriesResponse

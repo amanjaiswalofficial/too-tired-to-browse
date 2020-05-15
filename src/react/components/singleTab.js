@@ -18,6 +18,7 @@ class SingleTab extends Component {
     
     componentWillMount(){
         const { item } = this.props
+        console.log(item)
     }
 
     performAction = (filePath) => {
