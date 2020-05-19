@@ -1,6 +1,8 @@
 const axios = require('axios')
 const fs = require('fs')
+
 const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES, VALID_FILE_FORMATS} = require('./constants')
+
 
 /*
 
@@ -17,15 +19,18 @@ getDataFromFileName = async (title, checkForMovie, checkForSeries) => {
 
     let APIResponseForMovies
     let APIResponseForSeries
+    let axiosCallArray = []
     if(checkForMovie){
         const movieQueryStringForAPI = SEARCH_STRING_FOR_MOVIE + title
-        APIResponseForMovies = await axios.get(movieQueryStringForAPI, {timeout: 10000}).then((response) =>{ return response})
+        axiosCallArray.push(axios.get(movieQueryStringForAPI, {timeout: 10000}).then((response) =>{ return response}))
     }
     if(checkForSeries){
         const seriesQueryStringForAPI = SEARCH_STRING_FOR_SERIES + title
-        APIResponseForSeries = await axios.get(seriesQueryStringForAPI).then((response) =>{ return response})
-        
+        axiosCallArray.push(axios.get(seriesQueryStringForAPI).then((response) =>{ return response}))
     }
+    response = await axios.all(axiosCallArray)
+    APIResponseForMovies = response[0]
+    APIResponseForSeries = response[1]
     return [APIResponseForMovies, APIResponseForSeries]
 }
 
@@ -84,9 +89,9 @@ getDataFromFileNames = async (singleObject) => {
     // currently returning the more famous response
     if(parseInt(movieResponse['imdbVotes']) > parseInt(seriesResponse['imdbVotes']))
     {
-        return movieResponse
+        singleObject['searchResults'] = movieResponse
     }else{
-        return seriesResponse
+        singleObject['searchResults'] = seriesResponse
     }
 }
 
@@ -195,6 +200,27 @@ class FolderInformation {
 
 }
 
+
+searchDB = async (model, filePaths) => {
+    model.defineSchemas()
+    let searchTagModel = model.searchTag
+    let APIInfoModel = model.APIFetchedInfo
+    model.syncSchema(searchTagModel)
+    model.syncSchema(APIInfoModel)
+    
+
+    // filePaths.forEach((filePath) => {
+        
+    // })
+
+    // const items = await model.getAllItems(schema)
+    // items.forEach((item) => {
+    //   console.log(item.data)
+    //   console.log(item.searchStrings)
+    // })
+}
+
 exports.getDataFromFileNames = getDataFromFileNames
 exports.getSearchStrings = getSearchStrings
+exports.searchDB = searchDB
 exports.FolderInformation = FolderInformation

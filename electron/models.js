@@ -1,11 +1,11 @@
 // Contain all model related operations
 // Library imports
-const path = require('path')
+const path = require("path")
 const { Sequelize, DataTypes } = require("sequelize");
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require("sqlite3").verbose();
 
 // Definitions
-class DataModel
+class DataSequelizeModel
 {
 
     constructor()
@@ -21,27 +21,29 @@ class DataModel
         });
 
         // connect to the db file
-        this.sequelize = new Sequelize({
+        this.sequelizer = new Sequelize({
             dialect: 'sqlite',
             storage: dbPath
         });
 
     }
 
-    defineSchema = (sequelizeInstance) => {
+    defineSchemas = () => {
 
-        return sequelizeInstance.define('Item', {
-
-            searchStrings: {
+        this.searchTag = this.sequelizer.define('SearchTag', {
+            tagName: {
                 type: DataTypes.STRING,
             },
             fileName:{
                 type: DataTypes.STRING
-            },
-            data: {
-                type: DataTypes.STRING
             }
         });
+        this.APIFetchedInfo = this.sequelizer.define('APIFetchedInformation',{
+            data:{
+                type: DataTypes.STRING
+            }
+        })
+        this.searchTag.belongsTo(this.APIFetchedInfo)
     }
 
     syncSchema = async (schemaInstance) => {
@@ -53,7 +55,6 @@ class DataModel
     insertItem = async (schemaInstance, fileName, searchStrings, data) => {
     
         this.syncSchema(schemaInstance)
-        values = [4,5,6]
         await schemaInstance.create({
             searchStrings: JSON.stringify(searchStrings), 
             fileName: fileName, 
@@ -96,4 +97,4 @@ class DataModel
         }
 }
 
-exports.DataModel = DataModel
+exports.DataSequelizeModel = DataSequelizeModel
