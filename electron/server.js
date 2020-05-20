@@ -1,6 +1,7 @@
 // Contain all the backend side operations
 // Library imports
 const {exec} = require('child_process')
+const fs = require('fs')
 
 // Custom imports
 const utils = require('./utils')
@@ -8,10 +9,11 @@ const models = require('./models')
 const DataSequelizeModel = models.DataSequelizeModel
 
 // Definitions
-var getDataFromFileNames = utils.getDataFromFileNames
 var searchDB = utils.searchDB
-var getSearchStrings = utils.getSearchStrings
-const FolderInformation = utils.FolderInformation
+var combineDataWithResponse = utils.combineDataWithResponse
+const TextMethods = utils.TextMethods
+const FolderMethods = utils.FolderMethods
+const APIMethods = utils.APIMethods
 
 
 getVideoData = async (folderPath) => {    
@@ -19,26 +21,39 @@ getVideoData = async (folderPath) => {
     // TODO: Refactor code to only have a single loop
     let usageWordCount = 3 // how many words to use to make search strings
     
-    const folderInfo = new FolderInformation()
+    const folderMethods = new FolderMethods()
     const model = new DataSequelizeModel()
-    let filePaths = folderInfo.getPaths(folderPath)
+    const apiMethods = new APIMethods()
+    const textMethods = new TextMethods()
+    let filePaths = folderMethods.getPaths(folderPath)
+    let fileSearchStringsArray = []
+    let dataForFileNames = []
+
 
     for(var index=0; index<filePaths.length; index++){
 
-        if(!filePaths[index]['folderEmpty']){
-            // if folder isn't empty, make it's searchStrings and then search for it in OMDB
-            getSearchStrings(filePaths[index], usageWordCount)
+        // if folder isn't empty, make it's searchStrings and then search for it in OMDB
+        let currentFileItem = filePaths[index]
+        if(!currentFileItem['folderEmpty']){
+
+            let searchStringsForFile = textMethods.getSearchStrings(currentFileItem, usageWordCount)
+            fileSearchStringsArray.push(
+            {
+                searchStrings: searchStringsForFile
+            })
             //searchDB(model, filePaths)
-            await getDataFromFileNames(filePaths[index])
-        }
-        else
-        {
-            // otherwise, i.e. the folder is empty, hence remove it
-            delete filePaths[index]
         }
         
     }
-    return filePaths
+
+    filePaths = filePaths.filter((filePath) => {
+        return !filePath['folderEmpty']
+    })
+
+    dataForFileNames = await apiMethods.getDataFromFileNames(fileSearchStringsArray)
+
+    let finalResponse = combineDataWithResponse(filePaths, dataForFileNames)
+    return finalResponse
 
 }
 

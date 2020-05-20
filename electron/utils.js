@@ -1,7 +1,9 @@
 const axios = require('axios')
+const path = require('path');
 const fs = require('fs')
 
-const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES, VALID_FILE_FORMATS} = require('./constants')
+const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES, 
+    VALID_FILE_FORMATS, NOT_FOUND_IMAGE_URL} = require('./constants')
 
 
 /*
@@ -9,132 +11,82 @@ const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES, VALID_FILE_FORMATS} = 
 http://www.omdbapi.com/?apikey=948a2d08&&type=[movie/series/episode]&&t=Demon+Slayer
 
  */
+class APIMethods {
 
+    getRequiredData = (singleObject) => {
 
+        if(!singleObject['Poster']){
+            singleObject['Poster'] = NOT_FOUND_IMAGE_URL
+        }
 
-/*
- * Makes API hit to get data for the file_name 
- */
-getDataFromFileName = async (title, checkForMovie, checkForSeries) => {
-
-    let APIResponseForMovies
-    let APIResponseForSeries
-    let axiosCallArray = []
-    if(checkForMovie){
-        const movieQueryStringForAPI = SEARCH_STRING_FOR_MOVIE + title
-        axiosCallArray.push(axios.get(movieQueryStringForAPI, {timeout: 10000}).then((response) =>{ return response}))
-    }
-    if(checkForSeries){
-        const seriesQueryStringForAPI = SEARCH_STRING_FOR_SERIES + title
-        axiosCallArray.push(axios.get(seriesQueryStringForAPI).then((response) =>{ return response}))
-    }
-    response = await axios.all(axiosCallArray)
-    APIResponseForMovies = response[0]
-    APIResponseForSeries = response[1]
-    return [APIResponseForMovies, APIResponseForSeries]
-}
-
-/*
- * Use method getDataFromFileName for a set of objects containing fileNames and searchStrings
- */
-getDataFromFileNames = async (singleObject) => {
-
+        let data = {
+            'Title': singleObject['Title'],
+            'Year': singleObject['Year'],
+            'Poster': singleObject['Poster']
+        }
     
-    let responses = []
-    let movieResponse = {}
-    let seriesResponse = {}
-    let checkForMovie = true
-    let checkForSeries = true
-    let finalMovieResponse = null
-    let finalSeriesResponse = null
-    let arrayOfWords = singleObject['searchStrings']
-    if(arrayOfWords.length && singleObject['isFile'] || !singleObject['isFile'] && singleObject['filePath']){
-        for(var index=arrayOfWords.length-1;index>=0;index--){
-            let movie = null
-            let series = null
-            responses = await getDataFromFileName(arrayOfWords[index], checkForMovie, checkForSeries)
-            if(responses){
-                // get the movie and series response from the hit
-                movie = responses[0]
-                series = responses[1]
+        return data
+    }
+    
+    formatAPIResponse = (APIResponseArray) => {
+    
+        let fileSearchResponseArray = []
+        //For each file, compare it's 2 results
+        for(var index = 0; index < APIResponseArray.length; index+=2){
+    
+            let movieResponse = APIResponseArray[index].data
+            let seriesResponse = APIResponseArray[index+1].data
+    
+            if(!movieResponse && seriesResponse){
                 
-                //If a movie is found, then stop looking for more movies
-                if(typeof movie != 'undefined' && 'Title' in movie.data && checkForMovie){
-                    checkForMovie = false
-                    movieResponse = movie.data        
-                }
-                //If a series is found then stop looking for more series
-                if(typeof series != 'undefined' && 'Title' in series.data && checkForSeries){
-                    checkForSeries = false
-                    seriesResponse = series.data
-                }
+                fileSearchResponseArray.push(this.getRequiredData(seriesResponse))
+    
             }
-            
+            else if(movieResponse && !seriesResponse){
+    
+                fileSearchResponseArray.push(this.getRequiredData(seriesResponse))
+    
+            }
+            else{
+                // TODO: Fix below
+                // IMP: This is also running when the data for both series and response is None
+                if(parseInt(movieResponse['imdbVotes']) > parseInt(seriesResponse['imdbVotes']))
+                {
+                    fileSearchResponseArray.push(this.getRequiredData(movieResponse))
+                }
+                else{
+                    fileSearchResponseArray.push(this.getRequiredData(seriesResponse))
+                }
+    
+            }
+        
         }
-
+        return fileSearchResponseArray
     }
-    finalMovieResponse = {
-        'Title': movieResponse['Title'],
-        'Year': movieResponse['Year'],
-        'Poster': movieResponse['Poster']
-    }
-
-    finalSeriesResponse = {
-        'Title': seriesResponse['Title'],
-        'Year': seriesResponse['Year'],
-        'Poster': seriesResponse['Poster']
-    }
-    delete singleObject['searchStrings']
-
-    // currently returning the more famous response
-    if(parseInt(movieResponse['imdbVotes']) > parseInt(seriesResponse['imdbVotes']))
-    {
-        singleObject['searchResults'] = movieResponse
-    }else{
-        singleObject['searchResults'] = seriesResponse
+    
+    getDataFromFileNames = async (arrayObject) => {
+    
+        let axiosCallArray = []
+        let finalAPIResponse = []
+        arrayObject.forEach((fileSearchStringsObject) => {
+    
+            let searchStrings = fileSearchStringsObject['searchStrings']
+            let title = searchStrings[searchStrings.length -2]
+            const movieQueryStringForAPI = SEARCH_STRING_FOR_MOVIE + title
+            const seriesQueryStringForAPI = SEARCH_STRING_FOR_SERIES + title
+            axiosCallArray.push(axios.get(movieQueryStringForAPI))
+            axiosCallArray.push(axios.get(seriesQueryStringForAPI))
+        })
+        
+        // contains 2 response for each file -> one for it's search in movies and another in DB
+        // Hence, if 6 such files, then 12 results
+        finalAPIResponse = await axios.all(axiosCallArray).then((response) =>{return response})
+        
+        return this.formatAPIResponse(finalAPIResponse)
+    
     }
 }
-
-
-/*
- * get possible n searchStrings from the given file name
- */
-getSearchStrings = (currentObject, n=5) => {
-
-    let resultArray = []
-    let arrayOfWords = getWordsFromFileName(currentObject['fileName'])
-    resultArray = createSearchStrings(arrayOfWords, n)
-    currentObject['searchStrings'] = resultArray
-
-}
-
-/*
- * Accept a file name and return all possible words from it in an array
- */
-getWordsFromFileName = (fileName) => {
-
-    return fileName.match(/[A-Za-z0-9]+/g)
-
-}
-
-/*
- * Extract Search strings from a file's name, upto n such strings
- * Ex: 'file_name_this.mp4' will be ['file', 'file+name', 'file+name+this']
- */
-createSearchStrings = (ArrayOfAllWordsInTitle, length) => {
-    let ArrayOfAllPossibleSearchStrings = []
-    if(ArrayOfAllWordsInTitle){
-        let lengthToSearch = ArrayOfAllWordsInTitle.length <= length ? ArrayOfAllWordsInTitle.length : length
-        for(var i=1;i<=lengthToSearch;i++){
-            let item = ArrayOfAllWordsInTitle.slice(0,i).join('+')
-                ArrayOfAllPossibleSearchStrings.push(item)
-        }
-    }
-    return ArrayOfAllPossibleSearchStrings
-    //Ex-['a', 'a+b', 'a+b+c']
-}
-
-class FolderInformation {
+class FolderMethods {
 
     getFilePathFromFolders(pathArray){
 
@@ -200,6 +152,48 @@ class FolderInformation {
 
 }
 
+class TextMethods {
+
+    /*
+    * get possible n searchStrings from the given file name
+    */
+    getSearchStrings = (currentObject, n=5) => {
+
+        let resultArray = []
+        let arrayOfWords = this.getWordsFromFileName(currentObject['fileName'])
+        resultArray = this.createSearchStrings(arrayOfWords, n)
+        return resultArray
+
+    }
+
+    /*
+    * Accept a file name and return all possible words from it in an array
+    */
+    getWordsFromFileName = (fileName) => {
+
+        return fileName.match(/[A-Za-z0-9]+/g)
+
+    }
+
+    /*
+    * Extract Search strings from a file's name, upto n such strings
+    * Ex: 'file_name_this.mp4' will be ['file', 'file+name', 'file+name+this']
+    */
+    createSearchStrings = (ArrayOfAllWordsInTitle, length) => {
+        let ArrayOfAllPossibleSearchStrings = []
+        if(ArrayOfAllWordsInTitle){
+            let lengthToSearch = ArrayOfAllWordsInTitle.length <= length ? ArrayOfAllWordsInTitle.length : length
+            for(var i=1;i<=lengthToSearch;i++){
+                let item = ArrayOfAllWordsInTitle.slice(0,i).join('+')
+                    ArrayOfAllPossibleSearchStrings.push(item)
+            }
+        }
+        return ArrayOfAllPossibleSearchStrings
+        //Ex-['a', 'a+b', 'a+b+c']
+    }
+}
+
+
 
 searchDB = async (model, filePaths) => {
     model.defineSchemas()
@@ -220,7 +214,17 @@ searchDB = async (model, filePaths) => {
     // })
 }
 
-exports.getDataFromFileNames = getDataFromFileNames
-exports.getSearchStrings = getSearchStrings
+combineDataWithResponse = (filePaths, dataFromAPIResponse) => {
+    console.log(filePaths)
+    for(var index=0; index<filePaths.length; index++){
+        let singleFile = filePaths[index]
+        singleFile['searchResults'] = dataFromAPIResponse[index]
+    }
+    return filePaths
+}
+
+exports.APIMethods = APIMethods
+exports.FolderMethods = FolderMethods
+exports.TextMethods = TextMethods
 exports.searchDB = searchDB
-exports.FolderInformation = FolderInformation
+exports.combineDataWithResponse = combineDataWithResponse
