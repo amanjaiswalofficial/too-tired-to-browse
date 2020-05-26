@@ -194,28 +194,51 @@ class TextMethods {
 }
 
 
+insertDB = async (model, searchStringsArray, APIResponse) => {
 
-searchDB = async (model, filePaths) => {
-    model.defineSchemas()
+    let searchTagModel = model.searchTag
+    let APIInfoModel = model.APIFetchedInfo
+    model.syncSchema(searchTagModel)
+    model.syncSchema(APIInfoModel)
+
+    // for each searchStringArray, make an entry for apiResponse for that specific set of values
+    for (var index=0; index< searchStringsArray.length; index++){
+        let apiResponseData = await APIInfoModel.create({
+            data: JSON.stringify(APIResponse[index])
+        }) 
+
+        // using foreign key relationship, give it's ID to the searchTags
+        let {searchStrings} = searchStringsArray[index]  
+        searchStrings.forEach((searchString) => {
+                    searchTagModel.create({
+                                tagName: searchString,
+                                APIFetchedInformationId: apiResponseData.dataValues.id
+                    })
+
+    })  
+    }
+
+}
+
+
+searchDB = async (model, searchStringsArray) => {
+    
     let searchTagModel = model.searchTag
     let APIInfoModel = model.APIFetchedInfo
     model.syncSchema(searchTagModel)
     model.syncSchema(APIInfoModel)
     
+    // get all data from APIInformation table
+    const APIItems = await model.getAllItemsFromAPIData()
+    const searchTags = await model.getAllSearchTags()
+    searchStringsArray.forEach((searchString) => {
 
-    // filePaths.forEach((filePath) => {
-        
-    // })
+    })
+    
 
-    // const items = await model.getAllItems(schema)
-    // items.forEach((item) => {
-    //   console.log(item.data)
-    //   console.log(item.searchStrings)
-    // })
 }
 
 combineDataWithResponse = (filePaths, dataFromAPIResponse) => {
-    console.log(filePaths)
     for(var index=0; index<filePaths.length; index++){
         let singleFile = filePaths[index]
         singleFile['searchResults'] = dataFromAPIResponse[index]
@@ -227,4 +250,9 @@ exports.APIMethods = APIMethods
 exports.FolderMethods = FolderMethods
 exports.TextMethods = TextMethods
 exports.searchDB = searchDB
+exports.insertDB = insertDB
 exports.combineDataWithResponse = combineDataWithResponse
+
+
+
+// remove Class

@@ -128,6 +128,8 @@ ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
  */
 
  
- //Start integration of DB - Sqlite
- //Save each hit's data in sqlite using name or something
- //Write logic to fetch it from DB if found instead of API
+ // Save each hit's data in sqlite using name or something
+ // Write logic to fetch it from DB if found instead of API
+ // On hover on tab, display more info
+ // Display thumbnail of the video that doesn't get match on IMDB
+ // 

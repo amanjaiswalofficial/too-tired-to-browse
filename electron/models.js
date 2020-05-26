@@ -33,9 +33,6 @@ class DataSequelizeModel
         this.searchTag = this.sequelizer.define('SearchTag', {
             tagName: {
                 type: DataTypes.STRING,
-            },
-            fileName:{
-                type: DataTypes.STRING
             }
         });
         this.APIFetchedInfo = this.sequelizer.define('APIFetchedInformation',{
@@ -52,6 +49,16 @@ class DataSequelizeModel
     
     }
 
+    getAllItems = async (schemaInstance) => {
+        try{
+            const allItems = await schemaInstance.findAll()
+            return allItems
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
+
     insertItem = async (schemaInstance, fileName, searchStrings, data) => {
     
         this.syncSchema(schemaInstance)
@@ -63,17 +70,29 @@ class DataSequelizeModel
 
     }
 
-    getAllItems = async (schemaInstance) => {
+    getAllItemsFromAPIData = async () => {
 
         try{
-            const allItems = await schemaInstance.findAll()
-            allItems.forEach(item => {
-                item.data = JSON.parse(item.data)
-                item.searchStrings = JSON.parse(item.searchStrings)
-            })
-            return allItems
-            // console.log(JSON.parse(allItems[1].data))
-            // console.log(JSON.parse(allItems[1].searchStrings))
+            this.syncSchema(this.APIFetchedInfo)
+            let allAPIData = await this.getAllItems(this.APIFetchedInfo)
+            for(var index=0; index < allAPIData.length; index++){
+                allAPIData[index] = JSON.parse(allAPIData[index].dataValues.data)
+            }
+            return allAPIData
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
+
+    getAllSearchTags = async () => {
+        try{
+            this.syncSchema(this.searchTag)
+            let allsearchTags = await this.getAllItems(this.searchTag)
+            for(var index=0; index < allsearchTags.length; index++){
+                allsearchTags[index] = allsearchTags[index].dataValues
+            }
+            return allsearchTags
         }
         catch(err){
             console.log(err)

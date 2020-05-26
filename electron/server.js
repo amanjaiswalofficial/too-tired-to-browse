@@ -9,6 +9,7 @@ const models = require('./models')
 const DataSequelizeModel = models.DataSequelizeModel
 
 // Definitions
+var insertDB = utils.insertDB
 var searchDB = utils.searchDB
 var combineDataWithResponse = utils.combineDataWithResponse
 const TextMethods = utils.TextMethods
@@ -23,6 +24,7 @@ getVideoData = async (folderPath) => {
     
     const folderMethods = new FolderMethods()
     const model = new DataSequelizeModel()
+    model.defineSchemas()
     const apiMethods = new APIMethods()
     const textMethods = new TextMethods()
     let filePaths = folderMethods.getPaths(folderPath)
@@ -41,16 +43,17 @@ getVideoData = async (folderPath) => {
             {
                 searchStrings: searchStringsForFile
             })
-            //searchDB(model, filePaths)
         }
         
     }
 
+    searchDB(model, fileSearchStringsArray)
     filePaths = filePaths.filter((filePath) => {
         return !filePath['folderEmpty']
     })
 
     dataForFileNames = await apiMethods.getDataFromFileNames(fileSearchStringsArray)
+    //insertDB(model, fileSearchStringsArray, dataForFileNames)
 
     let finalResponse = combineDataWithResponse(filePaths, dataForFileNames)
     return finalResponse
