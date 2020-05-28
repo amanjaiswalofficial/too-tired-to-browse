@@ -30,16 +30,25 @@ class SingleTab extends Component {
         }
     }
 
-    doThisAsWell = (e) => {
-        console.
-        e.preventDefault()
+    incOpacity = (item) => {
+     
+        this.props.setHighlighted(item)
+        document.getElementById(item.index).style.opacity = 0.5
+    }
+
+    decOpacity = (item) => {
+        document.getElementById(item.index).style.opacity = 1
     }
 
     displayTab = () => {
         
         return (
             <div style={{verticalAlign: 'middle'}}>
-            <Card style={{height: '380px', width: '250px'}}>
+            <Card 
+            style={{height: '380px', width: '250px'}} 
+            onMouseEnter={e => this.incOpacity(this.props.item)}
+            onMouseLeave={e => this.decOpacity(this.props.item)}
+            id={this.props.item.index}>
             
             <Button style={{
                     position: "absolute",

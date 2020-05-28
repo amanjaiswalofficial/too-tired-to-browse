@@ -52,8 +52,7 @@ getVideoData = async (folderPath) => {
         return !filePath['folderEmpty']
     })
 
-    dataForFileNames = await apiMethods.getDataFromFileNames(fileSearchStringsArray)
-    //insertDB(model, fileSearchStringsArray, dataForFileNames)
+    dataForFileNames = await apiMethods.getDataFromFileNames(model, fileSearchStringsArray)
 
     let finalResponse = combineDataWithResponse(filePaths, dataForFileNames)
     return finalResponse

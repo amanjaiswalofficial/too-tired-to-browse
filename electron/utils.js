@@ -28,43 +28,46 @@ class APIMethods {
         return data
     }
     
-    formatAPIResponse = (APIResponseArray) => {
+    formatAPIResponse = (modelObject, APIResponseArray) => {
     
         let fileSearchResponseArray = []
         //For each file, compare it's 2 results
         for(var index = 0; index < APIResponseArray.length; index+=2){
     
-            let movieResponse = APIResponseArray[index].data
-            let seriesResponse = APIResponseArray[index+1].data
-    
-            if(!movieResponse && seriesResponse){
-                
-                fileSearchResponseArray.push(this.getRequiredData(seriesResponse))
-    
+            let responseKey = null
+            let formattedResponse = null
+            let responses = {
+                'movie': APIResponseArray[index].data,
+                'series': APIResponseArray[index+1].data
             }
-            else if(movieResponse && !seriesResponse){
-    
-                fileSearchResponseArray.push(this.getRequiredData(seriesResponse))
-    
+
+            if(!responses.movie && responses.series){
+                responseKey = 'series'    
+            }
+            else if(responses.movie && !responses.series){
+                responseKey = 'movie'    
             }
             else{
                 // TODO: Fix below
                 // IMP: This is also running when the data for both series and response is None
-                if(parseInt(movieResponse['imdbVotes']) > parseInt(seriesResponse['imdbVotes']))
+                if(parseInt(responses.movie['imdbVotes']) > parseInt(responses.series['imdbVotes']))
                 {
-                    fileSearchResponseArray.push(this.getRequiredData(movieResponse))
+                    responseKey = 'movie'
                 }
                 else{
-                    fileSearchResponseArray.push(this.getRequiredData(seriesResponse))
+                    responseKey = 'series'
                 }
     
             }
+            formattedResponse = this.getRequiredData(responses[responseKey])
+            fileSearchResponseArray.push(formattedResponse)
+            //insertDB(model, fileSearchStringsArray, dataForFileNames)
         
         }
         return fileSearchResponseArray
     }
     
-    getDataFromFileNames = async (arrayObject) => {
+    getDataFromFileNames = async (modelObject, arrayObject) => {
     
         let axiosCallArray = []
         let finalAPIResponse = []
@@ -81,8 +84,7 @@ class APIMethods {
         // contains 2 response for each file -> one for it's search in movies and another in DB
         // Hence, if 6 such files, then 12 results
         finalAPIResponse = await axios.all(axiosCallArray).then((response) =>{return response})
-        
-        return this.formatAPIResponse(finalAPIResponse)
+        return this.formatAPIResponse(modelObject, finalAPIResponse)
     
     }
 }

@@ -59,6 +59,14 @@ class DataSequelizeModel
         }
     }
 
+    insertIntoAPIData = async (dataObject) => {
+
+    }
+
+    insertIntoSearchTags = async (searchStriings) => {
+        
+    }
+
     insertItem = async (schemaInstance, fileName, searchStrings, data) => {
     
         this.syncSchema(schemaInstance)

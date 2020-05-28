@@ -16,6 +16,10 @@ class MainWindow extends Component {
         this.getInformation() 
     }
 
+    setHighlighted = (item) => {
+        this.setState({highlightedIndex: item.index})
+    }
+ 
     getInformation = async () => {
         ipcRenderer.send(channels.GET_INFO)
         ipcRenderer.on(channels.GET_INFO, (event, arg) => {
@@ -26,22 +30,15 @@ class MainWindow extends Component {
             gotData: true
         })
         })
-        // const response = await axios.get('http://localhost:3002/test')
-        // console.log('response is: ',response)
-        // this.setState({
-        //     items: response.data
-        // })
-        // this.setState({
-        //     gotData: true
-        // })
-        //getVideoData(this.props.folderPath.fo)
     } 
 
     displayTabs = () => {
         
         let itemDisplayPane = this.state.items.map((singleItem) => {
             return (<li style={{float: "left", display: "inline", listStyleType: "none"}}>
-                <SingleTab item={singleItem}/>
+                <SingleTab 
+                item={singleItem} 
+                setHighlighted={this.setHighlighted}/>
                 </li>)
         })
 
