@@ -21,3 +21,14 @@
     color: #09d3ac;
   }
   
+  .img-style-no-display {
+    width: 50px; 
+    height: 50px;
+    display: none;
+  }
+
+  .img-style-yes-display {
+    width: 50px; 
+    height: 50px;
+    display: block;
+  }

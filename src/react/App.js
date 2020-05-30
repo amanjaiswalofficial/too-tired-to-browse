@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from '../logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { channels } from '../shared/constants';
@@ -15,13 +14,12 @@ class App extends React.Component {
     };
     ipcRenderer.on(channels.APP_INFO, (event, arg) => {
       ipcRenderer.removeAllListeners(channels.APP_INFO);
-      const { appName, appVersion, folderPath } = arg;
-      this.setState({ appName, appVersion, folderPath });
+      //const { appName, appVersion, folderPath } = arg;
+      //this.setState({ appName, appVersion, folderPath });
     });
   }
 
   render() {
-    const { appName, appVersion, folderPath } = this.state;
     return (
       <div className="App">
         <header className="App-header">

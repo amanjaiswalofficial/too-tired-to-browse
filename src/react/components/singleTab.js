@@ -1,9 +1,7 @@
 import './singleTab.css' 
 import React from 'react'
 import { Component } from 'react';
-import { Card, Button, Carousel } from 'react-bootstrap'
-import { channels } from '../../shared/constants'
-const { ipcRenderer } = window
+import { Card, Button} from 'react-bootstrap'
 
 //import axios from 'axios'
 
@@ -17,15 +15,6 @@ const { ipcRenderer } = window
 }*/
 
 class SingleTab extends Component {
-    
-    performAction = (filePath) => {
-        if(filePath.dirPath){
-            ipcRenderer.send(channels.EXPLORE_FOLDER, filePath.dirPath)
-        }
-        else{
-            ipcRenderer.send(channels.PLAY_VIDEO, filePath.filePath)
-        }
-    }
 
     setHighlighted = (item) => {
         this.props.setHighlighted(item)
@@ -51,6 +40,12 @@ class SingleTab extends Component {
         }
     }
 
+    handleButtonClick = (item) => {
+
+        this.props.handleButtonClick(item)
+
+    }
+
 
     displayTab = () => {
         
@@ -67,7 +62,7 @@ class SingleTab extends Component {
                     top:"45%",
                     left:"41%",
                     opacity:2
-                }} onClick={event => this.performAction(this.props.item)}>
+                }} onClick={event => this.handleButtonClick(this.props.item)}>
                 {this.props.item.isFile? "Play": "Open"}
             </Button>
             <Card.Img 
