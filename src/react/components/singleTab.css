@@ -1,0 +1,11 @@
+.tab-no-hover {
+    height: 380px;
+    width: 250px;
+    opacity: 1;
+}
+
+.tab-yes-hover {
+    height: 380px;
+    width: 250px;
+    opacity: 0.5;
+}

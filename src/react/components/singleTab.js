@@ -1,8 +1,10 @@
+import './singleTab.css' 
 import React from 'react'
 import { Component } from 'react';
 import { Card, Button, Carousel } from 'react-bootstrap'
 import { channels } from '../../shared/constants'
-const { ipcRenderer } = window 
+const { ipcRenderer } = window
+
 //import axios from 'axios'
 
 /*{
@@ -16,11 +18,6 @@ const { ipcRenderer } = window
 
 class SingleTab extends Component {
     
-    componentWillMount(){
-        const { item } = this.props
-        console.log(item)
-    }
-
     performAction = (filePath) => {
         if(filePath.dirPath){
             ipcRenderer.send(channels.EXPLORE_FOLDER, filePath.dirPath)
@@ -30,25 +27,40 @@ class SingleTab extends Component {
         }
     }
 
-    incOpacity = (item) => {
-     
+    setHighlighted = (item) => {
         this.props.setHighlighted(item)
-        document.getElementById(item.index).style.opacity = 0.5
     }
 
-    decOpacity = (item) => {
-        document.getElementById(item.index).style.opacity = 1
+    removeHighlighted = () => {
+        this.props.removeHighlighted()
     }
+
+    getClassName = (item) => {
+
+        // if mouse on any Tab
+        if(this.props.highlightedTab){
+
+            // if mouse on this tab, highlight this, and fade the rest
+            return this.props.highlightedTab[item.index] ? 'tab-no-hover': 'tab-yes-hover'
+
+        } 
+        else{
+
+            // if mouse on no tab, then fade none
+            return 'tab-no-hover'
+        }
+    }
+
 
     displayTab = () => {
         
         return (
             <div style={{verticalAlign: 'middle'}}>
             <Card 
-            style={{height: '380px', width: '250px'}} 
-            onMouseEnter={e => this.incOpacity(this.props.item)}
-            onMouseLeave={e => this.decOpacity(this.props.item)}
-            id={this.props.item.index}>
+            className={this.getClassName(this.props.item)}
+            id={this.props.item.index}
+            onMouseEnter={e => this.setHighlighted(this.props.item)}
+            onMouseLeave={this.removeHighlighted}>
             
             <Button style={{
                     position: "absolute",
