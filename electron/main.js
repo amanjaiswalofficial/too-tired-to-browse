@@ -1,8 +1,10 @@
 const { app, BrowserWindow, ipcMain, ipcRenderer, dialog} = require('electron');
 const path = require('path');
+const imageToBase64 = require('image-to-base64');
 const url = require('url');
 const { channels } = require('../src/shared/constants');
 const {getVideoData, playVideo} = require('./server')
+
 
 let folderPath = null
 
@@ -113,12 +115,6 @@ ipcMain.on(channels.EXPLORE_FOLDER, async (event, folderPath) => {
 ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
   playVideo(arg)
 })
-
-// ipcRenderer.send(channels.GET_DATA, (event) => {
-//   event.sender.send(channels.GET_DATA, {
-//     data: 'abc'
-//   })
-// })
 
 /*
  Snippets while packaging
