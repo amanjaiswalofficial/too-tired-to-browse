@@ -76,20 +76,19 @@ getVideoData = async (folderPath) => {
         if(videoObject.isVideo){
 
             let filename = videoObject.name.match(/[A-Za-z0-9]+/g).join("-")
-            
+            let saveDirPath = `/home/aman/Desktop/thumbnail/${filename}-thumbnail.png`
             let ffmpegThumbnailCommand = `ffmpeg -i ${videoObject.path} -ss 00:00:01.000 -vframes 1 ${saveDirPath}`
-            exec(ffmpegThumbnailCommand)
+            exec(ffmpegThumbnailCommand)   
             
-            //console.log(`${videoObject.name.replace(" ","-")}`)
 
-            // videoObject.ImageEncode = 
-            // await imageToBase64(videoObject.path).then((response) => {
-            //     return response
-            // })
+            videoObject.imageEncode = 
+            await imageToBase64(saveDirPath).then((response) => {
+                return response
+            })
         }
 
     }
-    //console.log(videoFiles)
+    console.log(videoFiles)
 
     // read all available files from folderPath
     // for each file path, execute ffmpeg to generate thumbnail
