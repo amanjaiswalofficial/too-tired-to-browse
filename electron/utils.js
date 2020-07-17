@@ -3,7 +3,8 @@ const path = require('path');
 const fs = require('fs')
 
 const {SEARCH_STRING_FOR_MOVIE, SEARCH_STRING_FOR_SERIES, 
-    VALID_FILE_FORMATS, NOT_FOUND_IMAGE_URL} = require('./constants')
+    VALID_FILE_FORMATS, NOT_FOUND_IMAGE_URL} = require('./constants');
+const { exec } = require('child_process');
 
 
 /*
@@ -150,6 +151,15 @@ class FolderMethods {
           });
         this.getFilePathFromFolders(pathArray)
         return pathArray
+    }
+
+    async getFileThumbnail(currentFileItem){
+
+        
+        
+        let inputString = `ffmpeg -i ${currentFileItem.filePath} -ss 00:00:01.000 -vframes 1 /home/aman/Desktop/thumbnail/${currentFileItem.fileName}-thumbnail.png`
+        console.log(inputString)
+
     }
 
 }

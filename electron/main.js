@@ -61,13 +61,13 @@ app.on('ready', createElectronWindow);
 
 ipcMain.on('open-folder-dialog', async () => {
   
-  folderPath = await dialog.showOpenDialog(electronWindow, {
-      properties: ['openDirectory']
-  });
+  // folderPath = await dialog.showOpenDialog(electronWindow, {
+  //     properties: ['openDirectory']
+  // });
   //Static folder for now:
-  // folderPath = {
-  //   filePaths: ['/home/aman/Videos/']
-  // }
+  folderPath = {
+    filePaths: ['/home/aman/Videos/']
+  }
 
 
 
