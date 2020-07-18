@@ -31,10 +31,12 @@ class MainWindow extends Component {
         ipcRenderer.on(channels.GET_INFO, (event, arg) => {
 
             let videoObjects = []
-            for(var index=0; index < arg.info.length; index++){
-                console.log(arg.info[index].imageEncode)
-                if(arg.info[index].imageEncode){
-                    videoObjects.push(arg.info[index])
+            let counter = 0
+            for(var i=0; i < arg.info.length; i++){
+                if(arg.info[i].imageEncode){
+                    counter+=1
+                    arg.info[i].index = counter
+                    videoObjects.push(arg.info[i])
                 }
 
             }
@@ -49,10 +51,7 @@ class MainWindow extends Component {
 
     setHighlighted = (item) => {
         // mouse has entered a tab
-        this.setState({highlightedTab: 
-            {
-                [item.index]: true
-            }})
+        this.setState({highlightedTab: {[item.index]: true}})
     }
 
     removeHighlighted = () => {
@@ -109,9 +108,7 @@ class MainWindow extends Component {
     displayTabs = () => {
         
         let itemDisplayPane = this.state.items.map((singleItem) => {
-            return (<div 
-                        style={{display: "inline"}} 
-                        key={singleItem.index}>
+            return (<div key={singleItem.index}>
                             <SingleTab 
                             item={singleItem} 
                             setHighlighted={this.setHighlighted}
@@ -122,22 +119,28 @@ class MainWindow extends Component {
                     </div>)
         })
 
-        return <div style={{display: "flex"}}>{itemDisplayPane}</div>
+        return <div style={{
+            display: "flex",
+            justifyContent: "left",
+            flexWrap: "wrap",
+            marginLeft: "14.4%",
+            marginRight: "14.4%",
+            alignCcontent: "center"
+        }}>{itemDisplayPane}</div>
     }
 
     render(){
 
         return(
-            <div className="App">
-                <header className="App-header">
-                <a href="#"><img 
+            <center>
+                <a href="#">
+                <img 
                 src={goBackIcon} 
                 class={this.state.folderLevel > 0 ? 'img-style-yes-display' : 'img-style-no-display'}
                 onClick={this.handleBackButtonClick}/></a>
                     {this.state.gotData?this.displayTabs():<SpinningLoader/>}
-                </header>
                 
-            </div>
+            </center>
         )
     }
 }

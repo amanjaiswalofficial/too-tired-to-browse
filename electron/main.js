@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, ipcRenderer, dialog} = require('electron');
+require('electron-reload')(__dirname);
 const path = require('path');
 const imageToBase64 = require('image-to-base64');
 const url = require('url');
@@ -43,20 +44,6 @@ function createElectronWindow () {
 
 app.on('ready', createElectronWindow);
 
-
-
-// app.on('window-all-closed', function () {
-//   if (process.platform !== 'darwin') {
-//     app.quit();
-//   }
-// });
-
-
-// app.on('activate', function () {
-//   if (mainWindow === null) {
-//     createElectronWindow();
-//   }
-// });
 
 
 ipcMain.on('open-folder-dialog', async () => {

@@ -22,7 +22,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+        <header className="App-header" style={{backgroundColor: "#2D142C"}}>
         <MainWindow/>
         </header>
       </div>

@@ -1,11 +1,41 @@
 .tab-no-hover {
-    height: 380px;
-    width: 250px;
-    opacity: 1;
+    flex: 0 1 calc(25% - 1em);
+    display: flex;
+    justify-content: space-between;
+    opacity: 0.2;
+    filter: blur(0.8px);
+    border: 0px;
+    border-radius: 0px;
+    transition: transform .4s;
+    float: left;
+}
+
+.tab-yes-hover:hover{
+    transform: scale(1.2);
+    z-index: 111;
+    border: 2px solid #801336;
+    background-color: #801336;
+    float: left;
 }
 
 .tab-yes-hover {
-    height: 380px;
-    width: 250px;
-    opacity: 0.5;
+    flex: 0 1 calc(25% - 1em);
+    display: flex;
+    justify-content: space-between;
+    opacity: 1;
+    border: 0px;
+    border-radius: 0px;
+    transition: transform .4s;
+    float: left;
 }
+
+
+.img-basic-css{
+    object-fit: cover;
+    vertical-align: middle;
+    border: 0px;
+    border-radius: 0px;
+    height: 200px;
+    width: 200px;
+}
+
