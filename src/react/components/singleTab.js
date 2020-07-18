@@ -1,8 +1,6 @@
 import './singleTab.css' 
 import React from 'react'
-import { Component } from 'react';
-import { Card, Button} from 'react-bootstrap'
-
+import { Component } from 'react';;
 //import axios from 'axios'
 
 /*{
@@ -57,17 +55,17 @@ class SingleTab extends Component {
             onMouseEnter={e => this.setHighlighted(this.props.item)}
             onMouseLeave={this.removeHighlighted}>
             
-            <Button style={{
+            {/* <Button style={{
                     position: "absolute",
                     top:"45%",
                     left:"41%",
                     opacity:2
                 }} onClick={event => this.handleButtonClick(this.props.item)}>
                 {this.props.item.isFile? "Play": "Open"}
-            </Button>
+            </Button> */}
             <Card.Img 
                 variant="top" 
-                src={this.props.item.searchResults['Poster']}
+                src={`data:image/png;base64,${this.props.item.imageEncode}`}
                 style={{height: "100%", width: "100%", objectFit: "cover"}} 
             />
 

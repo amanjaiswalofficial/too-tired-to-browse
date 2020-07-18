@@ -98,9 +98,9 @@ ipcMain.on(channels.APP_INFO, (event) => {
 //get data from folderPath
 ipcMain.on(channels.GET_INFO, async (event) => {
 
-  let videoFiles = await getVideoData(folderPath.filePaths[0])
+  let videoFilesObjects = await getVideoData(folderPath.filePaths[0])
   event.sender.send(channels.GET_INFO, {
-    info: videoFiles
+    info: videoFilesObjects
   })
 
 })

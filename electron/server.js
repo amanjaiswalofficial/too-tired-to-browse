@@ -78,6 +78,8 @@ getVideoData = async (folderPath) => {
             let filename = videoObject.name.match(/[A-Za-z0-9]+/g).join("-")
             let saveDirPath = `/home/aman/Desktop/thumbnail/${filename}-thumbnail.png`
             let ffmpegThumbnailCommand = `ffmpeg -i ${videoObject.path} -ss 00:00:01.000 -vframes 1 ${saveDirPath}`
+            
+            // TODO: to check status of command execution
             exec(ffmpegThumbnailCommand)   
             
 
@@ -88,15 +90,7 @@ getVideoData = async (folderPath) => {
         }
 
     }
-    console.log(videoFiles)
-
-    // read all available files from folderPath
-    // for each file path, execute ffmpeg to generate thumbnail
-    // for each thumbnail generated, save it into a folder
-    // for each such thumbnail file, create a base64
-    // along with it, get the file name
-    // create an object of file name & base64 of the thumbnail
-    // send a collection of these objects as response
+    return videoFiles
         
 }
 

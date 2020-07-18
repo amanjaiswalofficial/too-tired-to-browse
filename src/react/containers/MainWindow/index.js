@@ -30,7 +30,16 @@ class MainWindow extends Component {
         ipcRenderer.send(channels.GET_INFO)
         ipcRenderer.on(channels.GET_INFO, (event, arg) => {
 
-            this.displayFetchedInformation(arg.info)
+            let videoObjects = []
+            for(var index=0; index < arg.info.length; index++){
+                console.log(arg.info[index].imageEncode)
+                if(arg.info[index].imageEncode){
+                    videoObjects.push(arg.info[index])
+                }
+
+            }
+
+            this.displayFetchedInformation(videoObjects)
             this.setState({gotData: true})
 
             // cache current response in localStorage with a count to access later
