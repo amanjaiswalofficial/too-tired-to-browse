@@ -1,6 +1,6 @@
 // Contain all the backend side operations
 // Library imports
-const {exec} = require('child_process')
+const exec = require('await-exec')
 const fs = require('fs')
 var path = require('path')
 const imageToBase64 = require('image-to-base64');
@@ -12,8 +12,8 @@ const isVideo = (fileName) => {
     let fileExtension = path.extname(fileName)
     if(acceptable.includes(fileExtension)){
         return true
-        return false
     }
+    return false
 }
 
 const checkVideoFromDir = (folderPath, name) => {
@@ -52,9 +52,19 @@ const checkFileForVideo = (folderPath, name) => {
 
 }
 
-getVideoData = async (folderPath) => {    
+const generateThumbnail = async (command) => {
+
+    await exec(command, (err, stdout, stdin) => {
+       if(err){
+        console.log(err)
+       }    
+    })
+
+}
+
+const getVideoData = async (folderPath) => {    
     
-    isItemAFile = {
+    let isItemAFile = {
         true: checkFileForVideo,
         false: checkVideoFromDir
     }
@@ -72,15 +82,23 @@ getVideoData = async (folderPath) => {
 
     for(var index = 0; index < videoFiles.length; index++){
 
-        videoObject = videoFiles[index]
+        let videoObject = videoFiles[index]
         if(videoObject.isVideo){
 
             let filename = videoObject.name.match(/[A-Za-z0-9]+/g).join("-")
             let saveDirPath = `/home/aman/Desktop/thumbnail/${filename}-thumbnail.png`
-            let ffmpegThumbnailCommand = `ffmpeg -i ${videoObject.path} -ss 00:00:01.000 -vframes 1 ${saveDirPath}`
+            let ffmpegThumbnailCommand = `ffmpeg -y -i ${videoObject.path} -ss 00:00:01.000 -vframes 1 ${saveDirPath}`
             
             // TODO: to check status of command execution
-            exec(ffmpegThumbnailCommand)   
+            await generateThumbnail(ffmpegThumbnailCommand)
+            
+            // exec(ffmpegThumbnailCommand, (error, stdout, stderr) => {
+            //     if (error) {
+            //         console.error(`exec error: ${error}`);
+            //         return;
+            //     }
+            //     return "abc"
+            // }); 
             
 
             videoObject.imageEncode = 
@@ -96,7 +114,7 @@ getVideoData = async (folderPath) => {
 
 
 
-playVideo = (videoPath) => {
+const playVideo = (videoPath) => {
 
     exec('vlc -d '+videoPath)
 

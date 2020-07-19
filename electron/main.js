@@ -29,8 +29,9 @@ const startUrl =   url.format({
 
 function createElectronWindow () {
   electronWindow = new BrowserWindow({ 
-    width: 800, 
-    height: 600, 
+    width: 1366, 
+    height: 768, 
+    frame:false,
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js') 

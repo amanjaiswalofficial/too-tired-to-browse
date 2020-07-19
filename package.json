@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "await-exec": "^0.1.2",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
     "image-to-base64": "^2.1.0",
