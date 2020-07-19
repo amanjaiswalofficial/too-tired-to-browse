@@ -73,9 +73,9 @@ class SingleTab extends Component {
                 />
 
                 </Card>
-                <div>
+                {/* <div>
                     {this.props.item.name[1]}
-                </div>
+                </div> */}
             </div>
         )  
     }

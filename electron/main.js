@@ -1,7 +1,7 @@
-const { app, BrowserWindow, ipcMain, ipcRenderer, dialog} = require('electron');
-require('electron-reload')(__dirname);
+const { app, BrowserWindow, ipcMain} = require('electron');
+
 const path = require('path');
-const imageToBase64 = require('image-to-base64');
+
 const url = require('url');
 const { channels } = require('../src/shared/constants');
 const {getVideoData, playVideo} = require('./server')
@@ -10,11 +10,14 @@ const {getVideoData, playVideo} = require('./server')
 let folderPath = null
 
 let electronWindow;
+// During Production
 // const startUrl =   url.format({
-//                     pathname: path.join(__dirname, '../public/index.html'),
+//                     pathname: path.join(__dirname, '../electron.html'),
 //                     protocol: 'file:',
 //                     slashes: true,
 //                   });
+// -----------------------------------------------------------------------
+// During Development
 const startUrl =   url.format({
   pathname: path.join(__dirname, '../public/electron.html'),
   protocol: 'file:',
@@ -48,24 +51,22 @@ app.on('ready', createElectronWindow);
 
 ipcMain.on('open-folder-dialog', async () => {
   
+  // Dynamic folder for choice
   // folderPath = await dialog.showOpenDialog(electronWindow, {
   //     properties: ['openDirectory']
   // });
+  // -------------------------------------------------------------
   //Static folder for now:
   folderPath = {
     filePaths: ['/home/aman/Videos/']
   }
 
 
-
-  // getVideoData(folder_path.filePaths[0])
-  //electronWindow.webContents.executeJavaScript(`localStorage.setItem("folderPath", ${folder_path.filePaths[0]})`, true)
-
-  //while development
+  //During development
   process.env.ELECTRON_START_URL = 'http://localhost:3000'
   electronWindow.loadURL(process.env.ELECTRON_START_URL)
-
-  //while production
+  // -----------------------------------------------------
+  //During production
   // const newUrl =   url.format({
   //   pathname: path.join(__dirname, '../index.html'),
   //   protocol: 'file:',
@@ -105,11 +106,12 @@ ipcMain.on(channels.PLAY_VIDEO, (event, arg) => {
 
 /*
  Snippets while packaging
+ // During production
+ // replace to folder-dialog.js  from
+ <script src="../electron/folder-dialog.js"></script>
+ to
  <script src="./electron/folder-dialog.js"></script>
 
- pathname: path.join(__dirname, '../index.html')
+ // Then
+ npm run build && npm run build-electron && npm run package
  */
-
- 
- // Save each hit's data in sqlite using name or something
-
