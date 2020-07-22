@@ -16,12 +16,40 @@ import { Card, Button} from 'react-bootstrap'
 
 class SingleTab extends Component {
 
-    setHighlighted = () => {
+    constructor(props) {
+        super(props)
+        this.setState ({
+            cursorSide: null
+        })
+    }
+
+    setHighlighted = (element) => {
+        //console.log(window.innerHeight-element.pageY)
+        const cursorSide = element.pageX<window.innerWidth/2 ? "left": "right"
+        this.setState({cursorSide})
+        console.log(this.state)
         this.props.setHighlighted(this.props.item)
     }
 
     removeHighlighted = () => {
         this.props.removeHighlighted()
+    }
+
+    getMetaClass = () => {
+     
+        // if mouse on any Tab
+        if(this.props.highlightedTab){
+
+            // if mouse on this tab, highlight this, and fade the rest
+            return this.props.highlightedTab[this.props.item.index] ? `meta-yes-hover-${this.state.cursorSide}`: 'meta-no-hover'
+
+        } 
+        else{
+
+            // if mouse on no tab, then fade none
+            return 'meta-no-hover'
+        }
+
     }
 
     getClassName = () => {
@@ -47,35 +75,30 @@ class SingleTab extends Component {
         this.props.handleButtonClick(item)
     }
 
+    formatFileName = () => {
+
+        let fileName = this.props.item.name
+        let nameLength = Math.floor(this.props.item.name.length / 26)
+        let formattedName = ""
+        // 0, 26
+        // 26,52
+        // 52, 
+        for(let index = 0; index <= nameLength; index ++){
+            formattedName = formattedName + fileName.substring(index*26, (index+1)*26) + "\n"
+        }
+        return formattedName
+    }
 
     displayTab = () => {
         
         return (
-            <div>
-                <Card 
-                className={this.getClassName()}
+            <div className={this.getClassName()}
                 id={this.props.item.index}
                 onMouseEnter={this.setHighlighted}
                 onMouseLeave={this.removeHighlighted}>
-                
-                {/* <Button style={{
-                        position: "absolute",
-                        top:"45%",
-                        left:"41%",
-                        opacity:2
-                    }} onClick={event => this.handleButtonClick(this.props.item)}>
-                    {this.props.item.isFile? "Play": "Open"}
-                </Button> */}
-
-                <Card.Img
-                    className="img-basic-css"
-                    src={`data:image/png;base64,${this.props.item.imageEncode}`} 
-                />
-
-                </Card>
-                {/* <div>
-                    {this.props.item.name[1]}
-                </div> */}
+                <div style={{float:"left"}}><img className="img-basic-css"
+                    src={`data:image/png;base64,${this.props.item.imageEncode}`} alt=""/></div>
+                <div className={this.getMetaClass()}>{this.formatFileName()}</div>
             </div>
         )  
     }

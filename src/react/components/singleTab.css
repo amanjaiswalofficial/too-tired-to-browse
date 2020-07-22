@@ -7,10 +7,10 @@
     border: 0px;
     border-radius: 0px;
     transition: transform .4s;
-    float: left;
 }
 
 .tab-yes-hover:hover{
+    clear: both; 
     transform: scale(1.2);
     z-index: 111;
     border: 2px solid #801336;
@@ -19,6 +19,7 @@
 }
 
 .tab-yes-hover {
+    clear: both; 
     flex: 0 1 calc(25% - 1em);
     display: flex;
     justify-content: space-between;
@@ -26,7 +27,29 @@
     border: 0px;
     border-radius: 0px;
     transition: transform .4s;
-    float: left;
+}
+
+.meta-no-hover {
+  display: none;
+  clear: both; 
+}
+
+.meta-yes-hover-left {
+    font-family: Less-Light;
+    display: grid;
+    position: fixed;
+    clear: both; 
+    top: 80px;
+    left: 200px;
+}
+
+.meta-yes-hover-right {
+    font-family: Less-Light;
+    display: grid;
+    position: fixed;
+    clear: both; 
+    top: 80px;
+    right: 200px;
 }
 
 

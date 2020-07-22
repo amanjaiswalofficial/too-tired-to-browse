@@ -5,15 +5,16 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { channels } from '../../../shared/constants';
 import goBackIcon from '../../assets/images/go_back_icon.png'
-const { ipcRenderer } = window 
 
+const { ipcRenderer } = window 
 class MainWindow extends Component {
 
     componentWillMount = () => {        
         this.setState({
             gotData: false, 
             highlightedTab: null, 
-            folderLevel: 0
+            folderLevel: 0,
+            coordinates: null
         })
         this.getInformation() 
     }
@@ -135,11 +136,12 @@ class MainWindow extends Component {
             <center>
                 <a href="#">
                 <img 
+                alt=""
                 src={goBackIcon} 
                 class={this.state.folderLevel > 0 ? 'img-style-yes-display' : 'img-style-no-display'}
-                onClick={this.handleBackButtonClick}/></a>
-                    {this.state.gotData?this.displayTabs():<SpinningLoader/>}
-                
+                onClick={this.handleBackButtonClick}/>
+                </a>
+                {this.state.gotData?this.displayTabs():<SpinningLoader/>}
             </center>
         )
     }

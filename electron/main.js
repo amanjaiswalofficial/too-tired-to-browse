@@ -31,7 +31,7 @@ function createElectronWindow () {
   electronWindow = new BrowserWindow({ 
     width: 1366, 
     height: 768, 
-    frame:false,
+    //frame:false,
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js') 

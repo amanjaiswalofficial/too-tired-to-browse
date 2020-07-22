@@ -85,12 +85,16 @@ const getVideoData = async (folderPath) => {
         let videoObject = videoFiles[index]
         if(videoObject.isVideo){
 
-            let filename = videoObject.name.match(/[A-Za-z0-9]+/g).join("-")
+            let filename = 
+            videoObject.name.match(/[A-Za-z0-9]+/g).join("-")
             let saveDirPath = `/home/aman/Desktop/thumbnail/${filename}-thumbnail.png`
             let ffmpegThumbnailCommand = `ffmpeg -y -i ${videoObject.path} -ss 00:00:01.000 -vframes 1 ${saveDirPath}`
             
             // TODO: to check status of command execution
-            await generateThumbnail(ffmpegThumbnailCommand)
+            if(!fs.existsSync(saveDirPath)){
+                await generateThumbnail(ffmpegThumbnailCommand)
+            }
+            
             
             // exec(ffmpegThumbnailCommand, (error, stdout, stderr) => {
             //     if (error) {
