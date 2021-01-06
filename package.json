@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "await-exec": "^0.1.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.4.1",
     "image-to-base64": "^2.1.0",
     "react": "^16.12.0",
